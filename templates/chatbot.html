@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgriBot - Chatbot</title>
+
+    <!-- Fonts and Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background: url('https://images6.alphacoders.com/412/412077.jpg') no-repeat center center/cover;
+            animation: backgroundZoom 10s ease-in-out infinite alternate;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-left .welcome {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-nav {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .btn-nav:hover {
+            color: #34c759;
+        }
+
+        .logout-btn {
+            border: 2px solid #1a1a1a;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .chatbot-page-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .chatbot-page-container h1 {
+            font-style: italic;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .chatbot-container {
+            width: 100%;
+            height: 80vh;
+            background: #ffffff;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 2px solid #A5D6A7;
+        }
+
+        .chatbot-header {
+            background: #1e9e23;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background: #f9fdf9;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 20px;
+            max-width: 70%;
+            font-size: 16px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-message {
+            background: #C8E6C9;
+            color: #1B5E20;
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .bot-message {
+            background: #E3F2FD;
+            color: #0D47A1;
+            align-self: flex-start;
+            border-left: 4px solid #64B5F6;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 20px 15px;
+            border-top: 1px solid #C8E6C9;
+            background: #ffffff;
+            margin-top: -10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #A5D6A7;
+            border-radius: 10px 0 0 10px;
+            font-size: 16px;
+            background-color: #f0fef0;
+        }
+
+        .chatbot-send {
+            padding: 14px 28px;
+            background: #43A047;
+            color: white;
+            border: none;
+            border-radius: 0 10px 10px 0;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chatbot-send:hover {
+            background: #388E3C;
+        }
+
+        .loading {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4CAF50;
+            font-style: italic;
+        }
+
+        .loading span {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: bounce 1s infinite ease-in-out;
+        }
+
+        .loading span:nth-child(2) { animation-delay: 0.2s; }
+        .loading span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .bot-message ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .chatbot-page-container h1 {
+                font-size: 2rem;
+            }
+            .chatbot-container {
+                height: 70vh;
+            }
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="welcome">Welcome, {{ username or 'User' }}</span>
+        </div>
+        <div class="nav-right">
+            <a href="/dashboard" class="btn-nav">Home</a>
+            <a href="/crop_prediction" class="btn-nav">Crop Recommendation</a>
+            <a href="/weather" class="btn-nav">Weather Updates</a>
+            <a href="/chatbot" class="btn-nav">Chatbot</a>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="chatbot-page-container">
+        <h1>AgriBot - Your Agriculture Assistant</h1>
+        <div class="chatbot-container">
+            <div class="chatbot-header">
+                <h3>AgriBot</h3>
+            </div>
+            <div id="chatbot-messages" class="chatbot-messages">
+                <div class="message bot-message">
+                    <img src="{{ url_for('static', filename='images/bot_profile.png') }}" class="profile-img" alt="Bot">
+                    <span class="typing-text">Hello! I’m AgriBot, here to help with all your agriculture-related questions—or anything else! What’s on your mind?</span>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input" placeholder="Ask me anything...">
+                <button id="chatbot-send" class="chatbot-send">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatbotSend = document.getElementById('chatbot-send');
+            const chatbotInput = document.getElementById('chatbot-input');
+            const chatbotMessages = document.getElementById('chatbot-messages');
+
+            chatbotSend.addEventListener('click', sendMessage);
+            chatbotInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            function sendMessage() {
+                const message = chatbotInput.value.trim();
+                if (!message) return;
+
+                addMessage('user-message', message);
+                chatbotInput.value = '';
+
+                const loading = document.createElement('div');
+                loading.className = 'message loading';
+                loading.innerHTML = 'AgriBot is typing <span></span><span></span><span></span>';
+                chatbotMessages.appendChild(loading);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+                fetch('/chatbot_response', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    chatbotMessages.removeChild(loading);
+                    addMessage('bot-message', data.response, "{{ url_for('static', filename='images/bot_profile.png') }}", true);
+                })
+                .catch(() => {
+                    chatbotMessages.removeChild(loading);
+                    addMessage('bot-message', 'Oops! Something went wrong.', "{{ url_for('static', filename='images/bot_profile.png') }}", true);
+                });
+            }
+
+            function addMessage(className, text, imgSrc, isBot = false) {
+                const div = document.createElement('div');
+                div.className = `message ${className}`;
+
+                if (isBot) {
+                    div.innerHTML = `<img src="${imgSrc}" class="profile-img" alt="Bot"><span class="typing-text"></span>`;
+                    chatbotMessages.appendChild(div);
+                    const formattedText = formatText(text);
+                    typeHTML(div.querySelector('.typing-text'), formattedText);
+                } else {
+                    div.innerHTML = `<span>${text}</span>`;
+                    chatbotMessages.appendChild(div);
+                }
+
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+
+            function typeHTML(element, html) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                const nodes = Array.from(tempDiv.childNodes);
+                let index = 0;
+
+                function typeNextNode() {
+                    if (index >= nodes.length) return;
+                    const node = nodes[index];
+                    const cloned = node.cloneNode(true);
+
+                    if (cloned.nodeType === Node.TEXT_NODE) {
+                        let text = cloned.textContent;
+                        let i = 0;
+                        function typeChar() {
+                            if (i < text.length) {
+                                element.append(text[i++]);
+                                setTimeout(typeChar, 10);
+                            } else {
+                                index++;
+                                typeNextNode();
+                            }
+                        }
+                        typeChar();
+                    } else {
+                        element.appendChild(cloned);
+                        index++;
+                        typeNextNode();
+                    }
+                }
+                typeNextNode();
+            }
+
+            function formatText(text) {
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                const lines = text.split('\n');
+                let formatted = '';
+                let inList = false;
+
+                lines.forEach(line => {
+                    if (line.startsWith('- ')) {
+                        if (!inList) {
+                            inList = true;
+                            formatted += '<ul>';
+                        }
+                        formatted += `<li>${line.substring(2).trim()}</li>`;
+                    } else {
+                        if (inList) {
+                            formatted += '</ul>';
+                            inList = false;
+                        }
+                        if (line.trim()) {
+                            formatted += `<p>${line.trim()}</p>`;
+                        }
+                    }
+                });
+
+                if (inList) {
+                    formatted += '</ul>';
+                }
+
+                return formatted;
+            }
+        });
+    </script>
+</body>
+</html>

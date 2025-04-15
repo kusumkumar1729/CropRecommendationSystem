@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Recommendation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://c4.wallpaperflare.com/wallpaper/322/195/650/tea-plantation-wallpaper-preview.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            margin: 20px 0;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #4A4A4A;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            padding: 12px;
+            width: 100%;
+            margin-top: 8px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .fertilizer-item {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fertilizer-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .fertilizer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+        }
+
+        .fertilizer-image {
+            max-width: 300px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .fertilizer-image:hover {
+            transform: scale(1.05);
+        }
+
+        .fertilizer-description {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .btn {
+            border-radius: 50px;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 767px) {
+            .container {
+                padding: 25px;
+                max-width: 90%;
+            }
+
+            h2 {
+                font-size: 2.2rem;
+            }
+
+            .fertilizer-image {
+                max-width: 300px;
+            }
+
+            .fertilizer-title {
+                font-size: 1.1rem;
+            }
+
+            .fertilizer-description {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Fertilizer Recommendation</h2>
+        <div class="mb-3">
+            <label for="crop">Crop:</label>
+            <input type="text" id="crop" value="{{ crop }}" class="form-control" readonly>
+        </div>
+        <div class="mb-3">
+            <label>Recommended Fertilizers:</label>
+            <div>
+                {% for fertilizer, image, description in fertilizers %}
+                    <div class="fertilizer-item">
+                        <div class="fertilizer-title">{{ fertilizer }}</div>
+                        <img src="{{ url_for('static', filename='images/fertilizers/' + image) }}" 
+                             alt="{{ fertilizer }}" class="fertilizer-image">
+                        <div class="fertilizer-description">{{ description }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <a href="/crop_recommendation" class="btn btn-primary">Back to Crop</a>
+            <a href="/" class="btn btn-success">Home</a>
+        </div>
+    </div>
+</body>
+</html>

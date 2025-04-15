@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroPredict - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=SF+Pro+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "SF Pro Display", "Arial", sans-serif;
+        }
+        body {
+            background: url('static/images/crop-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            color: #E0E0E0;
+            line-height: 1.999;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+        /* Navbar Styling */
+        nav {
+            background: linear-gradient(90deg, #0A2239, #1E4D6E);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        nav .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+        nav .brand {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 40px;
+            font-weight: 400;
+            background: linear-gradient(90deg, #00D4D4, #39FF14);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 40px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 8px 20px;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        nav ul li a:hover {
+            color: #00D4D4;
+        }
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 4px;
+            left: 50%;
+            background: #00D4D4;
+            transition: all 0.3s ease;
+        }
+        nav ul li a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        /* Container Styling */
+        .container {
+            max-width: 1400px;
+            margin: 120px auto 50px;
+            padding: 0 30px;
+            position: relative;
+        }
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        .welcome-section h1 {
+            font-family: "Playfair Display", serif;
+            font-style: italic;
+            font-size: 60px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            background: linear-gradient(90deg, #ffffff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .welcome-section p {
+            font-size: 22px;
+            color: #E0E0E0;
+            margin-bottom: 35px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        .welcome-section ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 40px;
+            color: #E0E0E0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        .welcome-section ul li {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .recommend-btn {
+            background: #0A2239;
+            color: #FFFFFF;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .recommend-btn:hover {
+            background: #00D4D4;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        /* General Headings */
+        h2 {
+            font-size: 40px;
+            margin: 80px 0 40px;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        /* Marquee Carousel Section */
+        .marquee-section {
+            padding: 0;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 0; /* Full edge-to-edge */
+            margin: 0;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+        }
+        .marquee-inner {
+            display: flex;
+            animation: marquee 25s linear infinite;
+            will-change: transform;
+        }
+        .marquee-inner:hover {
+            animation-play-state: paused;
+        }
+        .marquee-item {
+            position: relative;
+            flex: 0 0 300px; /* Larger square size */
+            margin-right: 20px;
+            height: 300px; /* Larger square size */
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .marquee-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            filter: brightness(85%);
+            transition: filter 0.3s ease;
+        }
+        .marquee-item:hover img {
+            filter: brightness(100%);
+        }
+        .marquee-caption {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #FFFFFF;
+        }
+        .marquee-caption h5 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        .marquee-btn {
+            display: none;
+            padding: 8px 20px;
+            font-size: 14px;
+            background: #000000; /* Black button */
+            border: 2px solid #000000;
+            color: #FFFFFF;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .marquee-item:hover .marquee-btn {
+            display: inline-block;
+            animation: fadeInUp 0.3s ease;
+        }
+        .marquee-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .details-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            max-height: 0;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 20px;
+            border-radius: 0 0 15px 15px;
+            transition: max-height 0.5s ease;
+            color: #333333;
+            font-size: 14px;
+        }
+        .details-panel.active {
+            max-height: 150px;
+            padding: 20px;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        /* Section Styling */
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 20px;
+            margin-bottom: 80px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .section:hover {
+            transform: translateY(-5px);
+        }
+        .section p, .section ul {
+            font-size: 18px;
+            color: #333333;
+        }
+        .section ul {
+            list-style: disc;
+            padding-left: 30px;
+        }
+        .section ul li {
+            margin-bottom: 15px;
+        }
+        /* Subscription Box */
+        .subscription-box {
+            background: #0A2239;
+            color: #FFFFFF;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-bottom: 80px;
+            transition: transform 0.3s ease;
+        }
+        .subscription-box:hover {
+            transform: translateY(-5px);
+        }
+        .subscription-box h2 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #39FF14;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        .subscription-box input {
+            width: 100%;
+            max-width: 350px;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #FFFFFF;
+            color: #333333;
+        }
+        .subscription-box button {
+            background: #00D4D4;
+            color: #FFFFFF;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .subscription-box button:hover {
+            background: #39FF14;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="brand">AgroPredict</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/register_login">Register</a></li>
+                <li><a href="/login">Sign In</a></li>
+                <li><a href="/aboutus">About Us</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>Welcome to Our <br> Crop Recommendation Project</h1>
+            <p>AgroPredict blends agriculture with cutting-edge machine learning to recommend the perfect crops for your land. <br> Input soil nutrients (N, P, K), climate data (temperature, humidity, pH, rainfall), and let our AI do the rest.</p>
+            <ul>
+                <li><strong>Algorithms Used:</strong> Decision Tree, Logistic Regression, Random Forest, Naive Bayes, SVM, XGBoost.</li>
+                <li><strong>Advantages:</strong> Boosts productivity, saves resources, leverages data-driven insights, and promotes sustainable farming.</li>
+            </ul>
+            <a href="/register_login"><button class="recommend-btn">Recommend</button></a>
+        </div>
+
+        <!-- Marquee Carousel Section -->
+        <h2>Explore Our Crops</h2>
+        <section class="marquee-section">
+            <div class="marquee-container">
+                <div class="marquee-inner">
+                    <div class="marquee-item">
+                        <img src="static/images/rice.jpg" alt="Rice">
+                        <div class="marquee-caption">
+                            <h5>Rice</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Rice is a staple crop in India, grown in flooded fields. It requires a pH of 5.5-7, rich alluvial soil, and nutrients like Nitrogen (50-100 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/maize.jpg" alt="Maize">
+                        <div class="marquee-caption">
+                            <h5>Maize</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Maize is a versatile cereal crop, needing well-drained loamy soil with a pH of 5.5-7.5. Nutrient requirements: Nitrogen (80-120 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/chickpea.jpg" alt="Chickpea">
+                        <div class="marquee-caption">
+                            <h5>Chickpea</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Chickpea, a protein-rich legume, grows in sandy loam soil with a pH of 6-7.5. Needs Nitrogen (20-30 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/kidneybeans.jpg" alt="Kidney Beans">
+                        <div class="marquee-caption">
+                            <h5>Kidney Beans</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Kidney beans thrive in loamy soil with a pH of 6-7. Nutrient needs: Nitrogen (30-50 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/pigeonpeas.jpg" alt="Pigeon Peas">
+                        <div class="marquee-caption">
+                            <h5>Pigeon Peas</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Pigeon peas are drought-resistant, grown in red loamy soil with a pH of 5-7. Requires Nitrogen (20-40 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/mothbeans.jpg" alt="Moth Beans">
+                        <div class="marquee-caption">
+                            <h5>Moth Beans</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Moth beans grow in sandy soil with a pH of 6-7.5. Nutrient needs: Nitrogen (20-30 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/mungbeans.jpg" alt="Mung Bean">
+                        <div class="marquee-caption">
+                            <h5>Mung Bean</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Mung beans prefer loamy soil with a pH of 6-7. Nutrient requirements: Nitrogen (20-40 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/blackgram.jpg" alt="Black Gram">
+                        <div class="marquee-caption">
+                            <h5>Black Gram</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Black gram thrives in clayey soil with a pH of 6-7.5. Needs Nitrogen (20-30 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/lentil.jpg" alt="Lentil">
+                        <div class="marquee-caption">
+                            <h5>Lentil</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Lentils grow in loamy soil with a pH of 6-7.5. Nutrient needs: Nitrogen (20-30 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/promogranate.jpg" alt="Pomegranate">
+                        <div class="marquee-caption">
+                            <h5>Pomegranate</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Pomegranate grows in well-drained soil with a pH of 5.5-7.5. Requires Nitrogen (40-60 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/banana.jpg" alt="Banana">
+                        <div class="marquee-caption">
+                            <h5>Banana</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Banana needs rich loamy soil with a pH of 6-7.5. Nutrient requirements: Nitrogen (100-150 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/mango.jpg" alt="Mango">
+                        <div class="marquee-caption">
+                            <h5>Mango</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Mango thrives in well-drained soil with a pH of 5.5-7.5. Needs Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/grapes.jpg" alt="Grapes">
+                        <div class="marquee-caption">
+                            <h5>Grapes</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Grapes grow in sandy loam soil with a pH of 6-7.5. Nutrient needs: Nitrogen (40-60 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/watermelon.jpg" alt="Watermelon">
+                        <div class="marquee-caption">
+                            <h5>Watermelon</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Watermelon prefers sandy soil with a pH of 6-7. Needs Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/muskmelon.jpg" alt="Muskmelon">
+                        <div class="marquee-caption">
+                            <h5>Muskmelon</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Muskmelon thrives in sandy loam soil with a pH of 6-7. Nutrient needs: Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/apple.jpg" alt="Apple">
+                        <div class="marquee-caption">
+                            <h5>Apple</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Apples grow in loamy soil with a pH of 6-7. Requires Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/orange.jpg" alt="Orange">
+                        <div class="marquee-caption">
+                            <h5>Orange</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Oranges need sandy loam soil with a pH of 6-7.5. Nutrient requirements: Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/papaya.jpg" alt="Papaya">
+                        <div class="marquee-caption">
+                            <h5>Papaya</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Papaya grows in loamy soil with a pH of 6-7. Needs Nitrogen (80-120 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/coconut.jpg" alt="Coconut">
+                        <div class="marquee-caption">
+                            <h5>Coconut</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Coconut thrives in sandy soil with a pH of 5.5-7.5. Nutrient needs: Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/jute.jpg" alt="Jute">
+                        <div class="marquee-caption">
+                            <h5>Jute</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Jute grows in alluvial soil with a pH of 6-7.5. Needs Nitrogen (40-60 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/coffee.jpg" alt="Coffee">
+                        <div class="marquee-caption">
+                            <h5>Coffee</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Coffee grows in loamy soil with a pH of 6-6.5. Nutrient needs: Nitrogen (50-80 kg/ha).</p>
+                        </div>
+                    </div>
+                    <!-- Duplicate items for continuous scroll -->
+                    <div class="marquee-item">
+                        <img src="static/images/rice.jpg" alt="Rice">
+                        <div class="marquee-caption">
+                            <h5>Rice</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Rice is a staple crop in India, grown in flooded fields. It requires a pH of 5.5-7, rich alluvial soil, and nutrients like Nitrogen (50-100 kg/ha).</p>
+                        </div>
+                    </div>
+                    <div class="marquee-item">
+                        <img src="static/images/maize.jpg" alt="Maize">
+                        <div class="marquee-caption">
+                            <h5>Maize</h5>
+                            <a href="#" class="marquee-btn" onclick="toggleDetails(this)">Details</a>
+                        </div>
+                        <div class="details-panel">
+                            <p>Maize is a versatile cereal crop, needing well-drained loamy soil with a pH of 5.5-7.5. Nutrient requirements: Nitrogen (80-120 kg/ha).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fertilizers Section -->
+        <h2>Fertilizers in India</h2>
+        <div class="section">
+            <p>Fertilizers are essential for enhancing soil fertility and crop productivity. Below is detailed information about common fertilizers used in India:</p>
+            <ul>
+                <li><strong>Urea</strong>: Contains 46% Nitrogen. Used for crops like rice, maize, and banana. Application rate: 50-150 kg/ha.</li>
+                <li><strong>Super Phosphate</strong>: Provides 16% Phosphorus. Ideal for rice, chickpea, and banana. Application rate: 40-60 kg/ha.</li>
+                <li><strong>Potash (MOP)</strong>: Supplies 60% Potassium. Used for pomegranate, grapes, and coconut. Application rate: 30-150 kg/ha.</li>
+                <li><strong>DAP</strong>: Contains 18% Nitrogen and 46% Phosphorus. Suitable for pigeon peas, watermelon, and orange. Application rate: 50-70 kg/ha.</li>
+                <li><strong>Ammonium Nitrate</strong>: Offers 34% Nitrogen. Used for maize and kidney beans. Application rate: 40-60 kg/ha.</li>
+            </ul>
+            <p><strong>Standards:</strong> Fertilizer application must align with soil testing and crop-specific needs.</p>
+        </div>
+
+        <!-- Algorithms Section -->
+        <h2>Our Prediction Algorithms</h2>
+        <div class="section">
+            <p>AgroPredict leverages cutting-edge machine learning to recommend crops based on soil and climate data (N, P, K, temperature, humidity, pH, rainfall).</p>
+            <ul>
+                <li><strong>Decision Tree</strong>: Splits data based on feature thresholds (e.g., rainfall > 100 cm).</li>
+                <li><strong>Logistic Regression</strong>: Predicts probabilities for crop suitability.</li>
+                <li><strong>Random Forest</strong>: Averages predictions for higher accuracy.</li>
+                <li><strong>Naive Bayes</strong>: Assumes feature independence, quick for small datasets.</li>
+                <li><strong>SVM</strong>: Finds the optimal hyperplane for high-dimensional data.</li>
+                <li><strong>XGBoost</strong>: Optimizes prediction accuracy through gradient boosting.</li>
+            </ul>
+            <p><strong>How It Works:</strong> Models are trained on historical crop data and predict the best crop for your input.</p>
+        </div>
+
+        <!-- Subscription Box -->
+        <div class="subscription-box">
+            <h2>Subscribe for Updates</h2>
+            <input type="email" placeholder="Enter your email">
+            <button>Subscribe</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails(button) {
+            const item = button.closest('.marquee-item');
+            const details = item.querySelector('.details-panel');
+            details.classList.toggle('active');
+            event.preventDefault(); // Prevent default link behavior
+        }
+    </script>
+</body>
+</html>

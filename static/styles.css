@@ -1,0 +1,49 @@
+/* styles.css - Enhanced Styling and Animation */
+
+body {
+    background-image: url("../static/images/background.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-family: Arial, sans-serif;
+    animation: pageLoad 1s ease-in-out;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px #888;
+    animation: slideIn 0.8s ease-in-out;
+}
+
+input {
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.3s;
+}
+
+input:focus {
+    box-shadow: 0px 0px 5px #1e90ff;
+    border-color: #1e90ff;
+}
+
+button {
+    border-radius: 20px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    background-color: #1e90ff;
+}
+
+@keyframes pageLoad {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); }
+    to { transform: translateY(0); }
+}

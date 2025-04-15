@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #e0e0e0;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-left .welcome {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-nav {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: color 0.3s ease;
+        }
+        .btn-nav:hover {
+            color: #34c759;
+        }
+
+        .profile-icon {
+            font-size: 2rem;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .profile-icon:hover {
+            transform: scale(1.1);
+            color: #34c759;
+        }
+
+        .logout-btn {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border: 2px solid #1a1a1a;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: #1a1a1a;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            padding: 50px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            font-weight: 700;
+            animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            animation: slideUp 1s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .section.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .content {
+            flex: 1;
+            padding: 0 20px;
+        }
+
+        .image {
+            flex: 1;
+            text-align: center;
+        }
+        .image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        .image img:hover {
+            transform: scale(1.05);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .btn-primary {
+            background: #34c759;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #2a9d43;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .section, .section.reverse {
+                flex-direction: column;
+                text-align: center;
+            }
+            .content {
+                padding: 0;
+                margin-bottom: 20px;
+            }
+            .image {
+                text-align: center;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="welcome">Welcome, {{ username or 'User' }}</span>
+        </div>
+        <div class="nav-right">
+            <a href="/" class="btn-nav">Home</a>
+            <a href="/crop_prediction" class="btn-nav">Crop Prediction</a>
+            <a href="/weather" class="btn-nav">Weather</a>
+            <a href="/chatbot" class="btn-nav">Chatbot</a>
+            <span class="material-icons profile-icon">account_circle</span>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Agri Dashboard</h1>
+
+        <!-- Farming Overview Section -->
+        <div class="section">
+            <div class="content">
+                <h2>Farming Overview</h2>
+                <p>Farming is the backbone of global food production, utilizing advanced techniques to cultivate crops and rear livestock. It supports economies, provides raw materials, and promotes sustainable land use across diverse regions.</p>
+                <a href="https://en.wikipedia.org/wiki/Agriculture" class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://farm.ws/wp-content/uploads/2024/10/What-is-Commercial-Farming_-The-Characteristics-Requirements-Types-More-930x620.webp" alt="Farming Overview">
+            </div>
+        </div>
+
+        <!-- Crops and Cultivation Section -->
+        <div class="section reverse">
+            <div class="content">
+                <h2>Crops and Cultivation</h2>
+                <p>Key crops include rice, wheat, maize, and soybeans, cultivated using methods like crop rotation and intercropping. These practices enhance soil health and yield, adapting to varying climatic conditions worldwide.</p>
+                <a href="https://en.wikipedia.org/wiki/Crop#:~:text=When%20plants%20of%20the%20same,%2C%20floriculture%2C%20and%20industrial%20crops." class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://media.licdn.com/dms/image/v2/C4E12AQH0PuAY5fCjpg/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1639634401524?e=2147483647&v=beta&t=EmLmTpkVb3qgprpvhAeUlQrvurrYlFY8xdlGbPNEPC4" alt="Crop Cultivation">
+            </div>
+        </div>
+
+        <!-- Fertilizers in Agriculture Section -->
+        <div class="section">
+            <div class="content">
+                <h2>Fertilizers in Agriculture</h2>
+                <p>Fertilizers such as urea, potash, and phosphates enrich soil nutrients, boosting crop growth and productivity. Proper application ensures higher yields while maintaining soil health for long-term sustainability.</p>
+                <a href="https://en.wikipedia.org/wiki/Fertilizer" class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://eos.com/wp-content/uploads/2023/11/components-of-different-types-of-fertilizers.jpg.webp" alt="Fertilizer Use">
+            </div>
+        </div>
+
+        <!-- AI in Farming Technology Section -->
+        <div class="section reverse">
+            <div class="content">
+                <h2>AI in Farming Technology</h2>
+                <p>AI revolutionizes agriculture with precision farming, using drones for monitoring, sensors for soil analysis, and predictive analytics for crop management. This technology optimizes resources and increases efficiency.</p>
+                <a href="https://intellias.com/artificial-intelligence-in-agriculture/" class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://images.prismic.io/intuzwebsite/ee51a4e5-4769-4a1b-b4a4-ce1ae93731a5_Banner%402x.png?auto=compress,format" alt="AI in Agriculture">
+            </div>
+        </div>
+
+        <!-- Uses of Farming Section -->
+        <div class="section">
+            <div class="content">
+                <h2>Uses of Farming</h2>
+                <p>Farming provides food security through crop production, raw materials like cotton and timber, and economic growth via exports. It also supports environmental conservation through sustainable practices and offers livelihoods to millions worldwide.</p>
+                <a href="https://www.learndirect.com/blog/5-important-benefits-of-farming" class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://online.maryville.edu/wp-content/uploads/sites/97/2022/07/MVU-BSSUS-2021-Q3-Skyscraper-Why-is-Agriculture-Important-Benefits-and-Its-Role-miniIg1-v2.jpg?w=1024" alt="Uses of Farming">
+            </div>
+        </div>
+
+        <!-- Benefits of Agriculture Section -->
+        <div class="section reverse">
+            <div class="content">
+                <h2>Benefits of Agriculture</h2>
+                <p>Agriculture enhances food supply, improves nutrition, and boosts rural economies. It reduces poverty, supports biodiversity, and mitigates climate change through carbon sequestration in soils, ensuring a sustainable future.</p>
+                <a href="https://online.maryville.edu/blog/why-is-agriculture-important/" class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://www.researchgate.net/profile/Satyam-Ranjan-2/publication/380531552/figure/fig1/AS:11431281242594075@1715568722575/Benefits-of-Precision-Agriculture.png" alt="Benefits of Agriculture">
+            </div>
+        </div>
+
+    
+
+        <!-- Advantages and Number of Agricultural Land in India Section -->
+        <div class="section">
+            <div class="content">
+                <h2>Advantages and Agricultural Land in India</h2>
+                <p>Organic farming offers healthier produce and environmental benefits. India has about 157.7 million hectares of agricultural land (as of recent estimates), with organic farming covering 1.49 million hectares, promoting sustainability and economic growth.</p>
+                <a href="https://india.gov.in/portal/agriculture" class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://holidaysfarm.in/assets/images/blog/advantages-of-choosing-managed-agriculture-farmland.webp" alt="Indian Agriculture">
+            </div>
+        </div>
+
+        <!-- Organic Farming Section -->
+        <div class="section reverse">
+            <div class="content">
+                <h2>Organic Farming</h2>
+                <p>Organic farming uses natural fertilizers like compost and avoids synthetic pesticides, enhancing soil health and biodiversity. It supports sustainability, reduces pollution, and meets the growing demand for chemical-free food globally.</p>
+                <a href="https://en.wikipedia.org/wiki/Organic_farming#:~:text=%22Organic%20agriculture%20is%20a%20production,of%20inputs%20with%20adverse%20effects." class="btn-primary">Learn More</a>
+            </div>
+            <div class="image">
+                <img src="https://kotharigroupindia.com/blog/images/organic-farming.JPG" alt="Organic Farming">
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

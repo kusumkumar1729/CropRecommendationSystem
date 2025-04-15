@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Recommendation System</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #2d3436;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('https://images6.alphacoders.com/412/412077.jpg') no-repeat center center/cover;
+      animation: backgroundZoom 10s ease-in-out infinite alternate;
+    }
+
+    @keyframes backgroundZoom {
+      0% { background-size: 100%; }
+      100% { background-size: 105%; }
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px 40px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+      animation: fadeSlideIn 1.5s ease-out;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(100px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #5D5D5D;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    label {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #34495e;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Colored Icons */
+    .fa-flask { color: #3498db; }
+    .fa-vial { color: #9b59b6; }
+    .fa-atom { color: #e67e22; }
+    .fa-cloud-rain { color: #2980b9; }
+    .fa-tint { color: #1abc9c; }
+    .fa-thermometer-half { color: #e74c3c; }
+    .fa-flask-vial { color: #8e44ad; }
+    .fa-brain { color: #f39c12; }
+
+    input, select {
+      background: #f3f9f1;
+      border: 2px solid #d1e7dd;
+      border-radius: 12px;
+      font-size: 1rem;
+      padding: 12px;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #27ae60;
+      box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+      transform: scale(1.02);
+    }
+
+    button {
+      background-color: #28a745;
+      border-color: #28a745;
+      color: white;
+      font-size: 1.3rem;
+      font-weight: bold;
+      padding: 14px;
+      border-radius: 50px;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      margin-top: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      top: 0;
+      left: 0;
+      transition: width 0.5s ease;
+    }
+
+    button:hover::before {
+      width: 100%;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+
+    .btn-back {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #34c759, #1b5e20);
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .btn-back:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(52, 199, 89, 0.4);
+        background: linear-gradient(135deg, #2a9d43, #134d1a);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="form-container">
+    
+
+    <h2>🌾 Crop Recommendation</h2>
+    <form action="/predict" method="POST">
+      <div class="mb-3">
+        <label for="nitrogen"><i class="fas fa-flask"></i> Nitrogen</label>
+        <input type="number" id="nitrogen" name="nitrogen" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="phosphorus"><i class="fas fa-vial"></i> Phosphorus</label>
+        <input type="number" id="phosphorus" name="phosphorus" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="potassium"><i class="fas fa-atom"></i> Potassium</label>
+        <input type="number" id="potassium" name="potassium" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="rainfall"><i class="fas fa-cloud-rain"></i> Rainfall</label>
+        <input type="number" id="rainfall" name="rainfall" step="0.1" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="humidity"><i class="fas fa-tint"></i> Humidity</label>
+        <input type="number" id="humidity" name="humidity" step="0.1" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="temperature"><i class="fas fa-thermometer-half"></i> Temperature</label>
+        <input type="number" id="temperature" name="temperature" step="0.1" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="ph"><i class="fas fa-flask-vial"></i> pH</label>
+        <input type="number" id="ph" name="ph" step="0.1" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="algorithm"><i class="fas fa-brain"></i> Algorithm</label>
+        <select id="algorithm" name="algorithm" class="form-select">
+          <option>Decision Tree</option>
+          <option>Logistic Regression</option>
+          <option>Random Forest</option>
+          <option>Naive Bayes</option>
+          <option>SVM</option>
+          <option>XGBoost</option>
+        </select>
+      </div>
+      <button type="submit">🌱 Recommend</button>
+
+      <a href="/dashboard" class="btn-back mt-4">Back to Dashboard</a>
+      
+    </form>
+  </div>
+</body>
+</html>

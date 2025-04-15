@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+         /* Navbar Styling */
+nav {
+    background: #1A3C5A; /* Professional dark blue */
+    padding: 20px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center; /* Center everything */
+}
+
+/* Centering the container */
+nav .nav-container {
+    max-width: 1300px;
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Align items to center */
+    align-items: center;
+    gap: 50px;
+}
+
+/* Brand Styling */
+nav .brand {
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #2ECC71, #3498DB);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Centering the navigation menu */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* Navigation Links */
+nav ul li a {
+    text-decoration: none;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 8px 20px;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+/* Hover effects */
+nav ul li a:hover {
+    color: #3498DB;
+}
+
+nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 4px;
+    left: 50%;
+    background: #3498DB;
+    transition: all 0.3s ease;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+        .container {
+            max-width: 1000px;
+            margin: 100px auto 50px;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-in-out;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            animation: fadeInUp 0.8s ease-in-out;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        ul li {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #555;
+        }
+        ul li strong {
+            color: #007aff;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/register_login">Register</a></li>
+            <li><a href="/login">Sign In</a></li>
+            <li><a href="/aboutus">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Contact Us</h1>
+        <div class="section">
+            <h2>Get in Touch</h2>
+            <ul>
+                <li><strong>Email:</strong> support@croprecommendation.com</li>
+                <li><strong>Phone:</strong> +91-1234567890</li>
+                <li><strong>Address:</strong> 123 Agriculture Lane, Tech City, India</li>
+                <li><strong>Team Lead:</strong> Sunitha Killi - killisunitha525@gmail.com | +91-9876543210</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
