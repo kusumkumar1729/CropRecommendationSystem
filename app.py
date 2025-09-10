@@ -7,8 +7,8 @@ import os
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import google.generativeai as genai
 from dotenv import load_dotenv
+import json
 
 # Load environment variables
 load_dotenv()
@@ -18,15 +18,13 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'crop_recommendation_secret')
 
 # API Keys
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '79ed0441f03883b0101c4c5215a9434f')  # Replace with your key
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY', 'AIzaSyC7Ag57-RnZxRRMnXpQde_95JcdXpRDBk4')  # Replace with your key
+HF_API_TOKEN = os.getenv('HF_API_TOKEN')  # Optional; improves reliability for Hugging Face API
 
 # Email Configuration
 SENDER_EMAIL = os.getenv('SENDER_EMAIL', 'killisunitha525@gmail.com')
 SENDER_PASSWORD = os.getenv('SENDER_PASSWORD')  # Must be an app-specific password
 
-# Configure Google Generative AI
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-pro')  # Verify model availability with genai.list_models()
+# No Gemini configuration (removed). Using Hugging Face inference as primary AI.
 
 # OTP Generation and Email Sending
 def send_otp(email):
@@ -451,32 +449,187 @@ def chatbot_response():
     try:
         data = request.get_json()
         if not data or 'message' not in data:
-            return jsonify({'response': 'Please send a valid message!'}), 400
+            return jsonify({'response': 'Please send a valid message!'}), 200
 
         user_message = data['message'].strip()
-        response = generate_gemini_response(user_message)
+        response = generate_ai_response(user_message)
         return jsonify({'response': response})
     except Exception as e:
         print(f"Error in chatbot_response: {e}")
-        return jsonify({'response': 'Oops, I hit a snag! Let’s try again—what’s your question?'}), 500
+        # Always return a graceful 200 so the UI shows a friendly message
+        return jsonify({'response': 'Oops, I hit a snag! Let’s try again—what’s your question?'}), 200
 
-def generate_gemini_response(message):
-    prompt = f"""
-    You are AgriBot, an expert in agriculture, farming, crops, fertilizers, and related topics.
-    Provide accurate, detailed, and helpful answers. If the question is unrelated to agriculture,
-    still give a thoughtful response like a general-purpose AI. Answer this: "{message}"
-    """
+def call_huggingface_api(message):
+    """Use Hugging Face free inference API for agriculture Q&A"""
     try:
-        result = model.generate_content(prompt)
-        return result.text.strip()
-    except Exception as e:
-        print(f"Error calling Gemini API: {e}")
-        if 'hi' in message.lower() or 'hello' in message.lower():
-            return f"Hi {session.get('user', 'there')}! I’m AgriBot, ready to help with farming questions or anything else. What’s up?"
-        elif 'fertilizer' in message.lower() and 'rice' in message.lower():
-            return "For rice, common fertilizers include Urea (46% nitrogen) for growth, Super Phosphate (phosphorus) for roots, and Potash (potassium) for resilience. Apply about 100-150 kg/ha of Urea, adjusted to soil tests."
+        # Using a better model for text generation
+        url = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
+        headers = {"Authorization": f"Bearer {HF_API_TOKEN}"} if HF_API_TOKEN else {}
+        
+        # Create a more focused prompt for agriculture
+        prompt = f"You are an agriculture expert. Answer this farming question: {message}"
+        
+        payload = {
+            "inputs": prompt,
+            "parameters": {
+                "max_length": 200,
+                "temperature": 0.8,
+                "do_sample": True,
+                "top_p": 0.9
+            }
+        }
+        
+        response = requests.post(url, headers=headers, json=payload, timeout=15)
+        print(f"HF API response status: {response.status_code}")
+        
+        if response.status_code == 200:
+            result = response.json()
+            if isinstance(result, list) and len(result) > 0:
+                generated_text = result[0].get('generated_text', '')
+                # Clean up the response
+                if prompt in generated_text:
+                    response_text = generated_text.replace(prompt, '').strip()
+                else:
+                    response_text = generated_text.strip()
+                
+                if len(response_text) > 10:
+                    return response_text
+        elif response.status_code == 503:
+            print("HF API model is loading, using fallback")
         else:
-            return "I couldn’t connect to my full knowledge base, but I can still help! What do you want to know about farming or anything else?"
+            print(f"HF API error: {response.status_code} - {response.text}")
+            
+    except Exception as e:
+        print(f"Hugging Face API error: {e}")
+    
+    return None
+
+def generate_ai_response(message):
+    if not message:
+        return "Please type a message so I can help."
+
+    # Offline fallbacks for common intents
+    lower_msg = message.lower()
+    if 'news' in lower_msg and ('agri' in lower_msg or 'farm' in lower_msg or 'agriculture' in lower_msg):
+        return (
+            "I can't fetch live agriculture news right now. For the latest, check reliable sources like the FAO, USDA, ICAR, and Reuters/Financial Times agriculture sections. "
+            "Tell me your country or crop and I'll summarize likely current trends and risks."
+        )
+
+    # Small talk and common intents
+    if any(greet in lower_msg for greet in ['hi', 'hello', 'hey']):
+        return f"Hi {session.get('user', 'there')}! How can I help with farming today?"
+    if any(phrase in lower_msg for phrase in ['who are you', 'what are you']):
+        return "I'm AgriBot, your agriculture assistant. Ask me about crops, fertilizers, soil, irrigation, pests, and more."
+    if any(phrase in lower_msg for phrase in ['thank', 'thanks']):
+        return "You're welcome! Need anything else about your crops or fields?"
+    if 'help' in lower_msg:
+        return (
+            "I can help with: crop selection, fertilizer schedules, soil tests, irrigation planning, pest/disease hints, and weather-aware advice."
+            " Tell me your crop and location or share soil values (N, P, K, pH)."
+        )
+
+    # Agriculture general overview and tips
+    if lower_msg.strip() in ['agriculture', 'farming', 'agri', 'farm'] or 'agriculture' in lower_msg and len(lower_msg.split()) <= 4:
+        return (
+            "Agriculture covers soil health, crop choice, nutrition (N-P-K), irrigation, pest/disease management, and harvest timing."
+            " Share your region, soil test (N,P,K,pH), and water availability—I'll suggest crops and a basic nutrient plan."
+        )
+    
+    # Farming tips queries
+    if 'farming tips' in lower_msg or 'farm tips' in lower_msg or 'agriculture tips' in lower_msg:
+        tips = [
+            "🌱 **Soil Health**: Test soil every 2-3 years for pH, N-P-K levels. Add organic matter like compost.",
+            "💧 **Water Management**: Use drip irrigation to save 30-50% water. Mulch around plants to retain moisture.",
+            "🌾 **Crop Rotation**: Rotate crops to prevent soil depletion and pest buildup.",
+            "🐛 **Pest Control**: Use integrated pest management - natural predators, resistant varieties, minimal chemicals.",
+            "📅 **Timing**: Plant according to local weather patterns and soil temperature.",
+            "💰 **Cost Efficiency**: Start small, focus on high-value crops, use local seeds when possible."
+        ]
+        return "Here are key farming tips:\n\n" + "\n\n".join(tips) + "\n\nShare your specific location or crop for tailored advice!"
+    
+    # Location-specific queries (Vizag, Andhra Pradesh)
+    if 'vizag' in lower_msg or 'visakhapatnam' in lower_msg or 'andhra' in lower_msg:
+        return (
+            "**Farming in Vizag/Andhra Pradesh**:\n\n"
+            "🌡️ **Climate**: Tropical with good rainfall (1000-1200mm). Best crops: Rice, sugarcane, cotton, mango, cashew.\n"
+            "🌱 **Soil**: Red and black soils. Test pH (6.5-7.5 ideal for most crops).\n"
+            "💧 **Water**: Good groundwater. Use drip irrigation for water efficiency.\n"
+            "📅 **Seasons**: Kharif (June-Sept), Rabi (Oct-Mar). Rice in Kharif, vegetables in Rabi.\n"
+            "🌾 **Popular crops**: Paddy, sugarcane, cotton, chilli, turmeric, mango, cashew nuts.\n\n"
+            "Share your specific crop or soil details for precise guidance!"
+        )
+
+    # Crop detection using fertilizer_data
+    try:
+        mentioned_crop = None
+        for crop_name in fertilizer_data.keys():
+            if crop_name in lower_msg.replace(' ', '') or crop_name in lower_msg:
+                mentioned_crop = crop_name
+                break
+        if mentioned_crop:
+            data = fertilizer_data.get(mentioned_crop, {})
+            ferts = data.get('fertilizers', [])
+            desc = data.get('description', '')
+            fert_list = ', '.join(ferts) if ferts else 'No specific fertilizers available'
+            return (
+                f"{mentioned_crop.title()}: {desc}\n"
+                f"- Recommended fertilizers: {fert_list}.\n"
+                "Share your soil N-P-K and pH for precise rates; I can tailor a schedule."
+            )
+    except Exception as e:
+        print(f"Offline crop intent error: {e}")
+
+    # Use Hugging Face as primary AI now
+    hf_response = call_huggingface_api(message)
+    if hf_response and len(hf_response.strip()) > 10:
+        return f"Here's what I can suggest: {hf_response}"
+    
+    # Enhanced fallback responses for common queries
+    if 'hi' in message.lower() or 'hello' in message.lower():
+        return f"Hi {session.get('user', 'there')}! I'm AgriBot, ready to help with farming questions or anything else. What's up?"
+    elif 'fertilizer' in message.lower() and 'rice' in message.lower():
+        return "For rice, common fertilizers include Urea (46% nitrogen) for growth, Super Phosphate (phosphorus) for roots, and Potash (potassium) for resilience. Apply about 100-150 kg/ha of Urea, adjusted to soil tests."
+    elif 'weather' in lower_msg:
+        return "For local weather, use the Weather page in the app. Share your city here if you want a general farming advisory."
+    elif 'soil' in lower_msg and 'test' in lower_msg:
+        return "Do a soil test for N-P-K, pH, and organic matter every 1-2 seasons. Base fertilizer rates on those results; I can suggest ranges if you share values."
+    elif 'suggest' in lower_msg or 'plan' in lower_msg:
+        return (
+            "I can help you create a farming plan! Please share:\n"
+            "• Your location/region\n"
+            "• Soil test results (N, P, K, pH)\n"
+            "• Available water/irrigation\n"
+            "• Your goals (yield, quality, profit)\n"
+            "• Preferred crops or budget constraints\n\n"
+            "With this info, I'll suggest the best crops and fertilizer schedule!"
+        )
+    else:
+        # More helpful generic response
+        return (
+            "I'm here to help with your farming needs! I can assist with:\n\n"
+            "🌱 **Crop Selection**: Best crops for your soil and climate\n"
+            "💧 **Irrigation**: Water management and efficiency tips\n"
+            "🌾 **Fertilizers**: N-P-K recommendations and schedules\n"
+            "🐛 **Pest Control**: Natural and chemical solutions\n"
+            "📊 **Soil Health**: Testing and improvement strategies\n"
+            "💰 **Economics**: Cost-effective farming practices\n\n"
+            "Just ask about your specific crop, location, or farming challenge!"
+        )
+
+@app.route('/chatbot_status', methods=['GET'])
+def chatbot_status():
+    try:
+        status = {
+            "model_active": True,
+            "provider": "huggingface",
+            "model_name": "DialoGPT-medium",
+            "auth": "token" if HF_API_TOKEN else "anonymous"
+        }
+        return jsonify(status), 200
+    except Exception as e:
+        print(f"Error in chatbot_status: {e}")
+        return jsonify({"model_active": False, "provider": "offline"}), 200
 
 @app.route('/logout')
 def logout():
